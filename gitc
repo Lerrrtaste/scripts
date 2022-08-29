@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 <url>"
+    exit 1
+fi
+url="$1"
+domain="$(echo "$url" | cut -d/ -f3 | awk '{print tolower($0)}')"
+user="$(echo "$url" | cut -d/ -f4 | awk '{print tolower($0)}')"
+repo="$(echo "$url" | cut -d/ -f5 | awk '{print tolower($0)}')"
+path="$HOME/repos/$domain/$user/$repo"
+# echo "Cloning $url to $path"
+git clone "$url" "$path"
