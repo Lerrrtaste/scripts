@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+DISTANCE=15
+MOVE_DELAY=10
+IDLE_DELAY=5
+
+lastLocation=$(xdotool getmouselocation)
+lastMovement=$(date +%s)
+while true
+do
+    for ANGLE in 0 90 180 270
+    do
+        if [[ $(xdotool getmouselocation) = $lastLocation && $(($(date +%s) - $lastMovement)) -gt $IDLE_DELAY ]]; then
+            xdotool mousemove_relative --polar $ANGLE $DISTANCE
+            echo "Idle detected. Moving mouse to $lastLocation. (Last movement: $(date -d @$lastMovement))"
+            lastLocation=$(xdotool getmouselocation)
+            sleep $MOVE_DELAY
+        else
+            lastLocation=$(xdotool getmouselocation)
+            lastMovement=$(date +%s)
+            echo "Not idle. Skipping. (Last movement: $(date -d @$lastMovement))"
+            sleep $MOVE_DELAY
+        fi
+    done
+done
