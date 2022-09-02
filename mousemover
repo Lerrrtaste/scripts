@@ -3,6 +3,7 @@
 DISTANCE=15
 MOVE_DELAY=10
 IDLE_DELAY=5
+VARIATION=5
 
 lastLocation=$(xdotool getmouselocation)
 lastMovement=$(date +%s)
@@ -14,7 +15,7 @@ do
             xdotool mousemove_relative --polar $ANGLE $DISTANCE
             echo "Idle detected. Moving mouse to $lastLocation. (Last movement: $(date -d @$lastMovement))"
             lastLocation=$(xdotool getmouselocation)
-            sleep $MOVE_DELAY
+            sleep $[$MOVE_DELAY - ($VARIATION / 2) + ($RANDOM % $VARIATION)]s
         else
             lastLocation=$(xdotool getmouselocation)
             lastMovement=$(date +%s)
