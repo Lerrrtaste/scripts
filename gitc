@@ -4,10 +4,26 @@ if [ -z "$1" ]; then
     echo "Usage: $0 <url>"
     exit 1
 fi
+# Possible URL schemes:
+# git@github.com:Lerrrtaste/scripts.git -> ~/repos/github.com/Lerrrtaste/scripts
+# https://github.com/Lerrrtaste/scripts.git -> ~/repos/github.com/Lerrrtaste/scripts
+# https://git.concat.de/Lerrrtaste/scripts.git -> ~/repos/git.concat.de/Lerrrtaste/scripts
+# git@git.concat.de/Lerrrtaste/scripts.git -> ~/repos/git.concat.de/Lerrrtaste/scripts
 url="$1"
-domain="$(echo "$url" | cut -d/ -f3 | awk '{print tolower($0)}')"
-user="$(echo "$url" | cut -d/ -f4 | awk '{print tolower($0)}')"
-repo="$(echo "$url" | cut -d/ -f5 | awk '{print tolower($0)}')"
+if [[ "$url" == *"git@"* ]]; then
+    base_url="$(cut -d'@' -f2 <<< "$url")"
+    domain="$(cut -d':' -f1 <<< "$base_url")"
+    user="$(cut -d':' -f2 <<< "$base_url")"
+else
+    base_url="$(cut -d'/' -f3- <<< "$url")"
+    domain="$(cut -d'/' -f1 <<< "$base_url")"
+    user="$(cut -d'/' -f2 <<< "$base_url")"
+fi
 path="$HOME/repos/$domain/$user/$repo"
-# echo "Cloning $url to $path"
+path="$(echo "$path" | tr '[:upper:]' '[:lower:]')"
+echo "Cloning $url to $path"
+if [ -e "$path" ]; then
+    echo "Path $path already exists"
+    exit 1
+fi
 git clone "$url" "$path"
