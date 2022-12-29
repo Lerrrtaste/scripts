@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+dmenu_trash-restore() {
+    selected=$(trash-list | sort -n -r | dmenu -i -l 10 -p "Restore from trash:")
+    if [ -n "$selected" ]; then
+        echo 0 | trash-restore "$(echo "$selected" | cut -d ' ' -f 3)"
+    fi
+}
