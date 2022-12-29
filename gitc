@@ -4,20 +4,20 @@ if [ -z "$1" ]; then
     echo "Usage: $0 <url>"
     exit 1
 fi
-# Possible URL schemes:
-# git@github.com:Lerrrtaste/scripts.git -> ~/repos/github.com/Lerrrtaste/scripts
-# https://github.com/Lerrrtaste/scripts.git -> ~/repos/github.com/Lerrrtaste/scripts
-# https://git.concat.de/Lerrrtaste/scripts.git -> ~/repos/git.concat.de/Lerrrtaste/scripts
-# git@git.concat.de/Lerrrtaste/scripts.git -> ~/repos/git.concat.de/Lerrrtaste/scripts
-url="$1"
-if [[ "$url" == *"git@"* ]]; then
-    base_url="$(cut -d'@' -f2 <<< "$url")"
-    domain="$(cut -d':' -f1 <<< "$base_url")"
-    user="$(cut -d':' -f2 <<< "$base_url")"
+url=${1%.git}
+if [[ $url =~ @([^:]*): ]]; then
+  domain=${BASH_REMATCH[1]}
 else
-    base_url="$(cut -d'/' -f3- <<< "$url")"
-    domain="$(cut -d'/' -f1 <<< "$base_url")"
-    user="$(cut -d'/' -f2 <<< "$base_url")"
+  domain=$(echo "$url" | sed -n 's|^.*//\([^/]*\)/.*|\1|p')
+fi
+
+if [[ $url =~ :([^/]*)/([^/]*)$ ]]; then
+  user=${BASH_REMATCH[1]}
+  repo=${BASH_REMATCH[2]}
+else
+  user_repo=$(echo "$url" | sed -n 's|^.*/\([^/]*\)/\([^/]*\)$|\1/\2|p')
+  user=$(echo "$user_repo" | cut -d '/' -f 1)
+  repo=$(echo "$user_repo" | cut -d '/' -f 2)
 fi
 path="$HOME/repos/$domain/$user/$repo"
 path="$(echo "$path" | tr '[:upper:]' '[:lower:]')"
