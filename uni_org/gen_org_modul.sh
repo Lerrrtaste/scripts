@@ -1,33 +1,36 @@
 #!/usr/bin/env bash
 
-# MODUL="Graphische Datenverarbeitung"
+# MODUL="Visual Computing"
 # SHORT="GDV"
-# input_file="input-gd.txt"
-# output_file="out/graphische_datenverarbeitung.org"
+# output_file="out/visual_computing.org"
 
+MODUL="Entscheidungstheorie"
+SHORT="ET"
+output_file="out/entscheidungstheorie.org"
+
+# MODUL="Datenbanken 2"
+# SHORT="DB2"
+# output_file="out/datenbanken2.org"
+#
 # MODUL="Theoretische Informatik"
 # SHORT="TI"
-# input_file="input-ti.txt"
 # output_file="out/theoretische_informatik.org"
 
 # MODUL="Verteilte Systeme"
 # SHORT="VS"
-# input_file="input-vt.txt"
 # output_file="out/verteilte_systeme.org"
 
 # MODUL="Informatik und Gesellschaft"
 # SHORT="IG"
-# input_file="input-ig.txt"
+input_file="output.txt"
 # output_file="out/informatik_gesellschaft.org"
 
 # MODUL="IT-Controlling"
 # SHORT="ITC"
-# input_file="input-itc.txt"
 # output_file="out/it_controlling.org"
 
 # MODUL="Analysis"
 # SHORT="ga"
-# input_file="input-ga.txt"
 # output_file="out/analysis.org"
 
 
@@ -90,6 +93,16 @@ while IFS= read -r line; do
     praktika+="   :LOCATION: ${location}\n"
     praktika+="   :END:\n\n"
     praktika+="*** TODO Vorbereiten [[id:$(echo $SHORT | tr '[:upper:]' '[:lower:]')-p-${counter_p}][${SHORT} P-${counter_p}]]\n"
+    praktika+="DEADLINE: <${date} -1d>\n\n"
+    counter_p=$((counter_p + 1))
+
+  elif [[ "${event_type}" == "S:" ]]; then
+    praktika+="** ${MODUL} S-${counter_p}\n"
+    praktika+="   SCHEDULED: <${date} ${time}>\n"
+    praktika+="   :PROPERTIES:\n"
+    praktika+="   :ID: $(echo $SHORT | tr '[:upper:]' '[:lower:]')-s-${counter_p}\n"
+    praktika+="   :LOCATION: ${location}\n"
+    praktika+="   :END:\n\n"
     praktika+="DEADLINE: <${date} -1d>\n\n"
     counter_p=$((counter_p + 1))
 
